@@ -8,9 +8,9 @@ Resources:
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: YOUR_S3_BUCKET
+        S3Bucket: eastonboosters-website
         S3Key: contact-form.zip
-      Runtime: nodejs18.x
+      Runtime: nodejs22.x
       Timeout: 10
 
   LambdaExecutionRole:
