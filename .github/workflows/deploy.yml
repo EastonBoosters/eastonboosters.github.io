@@ -44,5 +44,5 @@ jobs:
         run: |
           cd aws
           zip -r contact-form.zip lambda/contact-form
-          aws s3 cp contact-form.zip s3://YOUR_S3_BUCKET/
+          aws s3 cp contact-form.zip s3://eastonboosters-website/
           aws cloudformation deploy --template-file template.yaml --stack-name easton-boosters-stack --capabilities CAPABILITY_IAM
