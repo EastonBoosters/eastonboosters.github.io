@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Easton Boosters Website
 
 Resources:
@@ -17,7 +17,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
@@ -26,12 +26,12 @@ Resources:
       Policies:
         - PolicyName: LambdaSESPolicy
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
                 Action:
                   - ses:SendEmail
-                Resource: '*'
+                Resource: "*"
 
   ApiGateway:
     Type: AWS::ApiGateway::RestApi

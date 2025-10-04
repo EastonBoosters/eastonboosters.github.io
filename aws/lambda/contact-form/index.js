@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 const ses = new AWS.SES();
 
 exports.handler = async (event) => {
@@ -6,7 +6,7 @@ exports.handler = async (event) => {
 
   const params = {
     Destination: {
-      ToAddresses: ['info@eastonboosters.org'],
+      ToAddresses: ["info@eastonboosters.org"],
     },
     Message: {
       Body: {
@@ -15,22 +15,22 @@ exports.handler = async (event) => {
         },
       },
       Subject: {
-        Data: 'New Contact Form Submission',
+        Data: "New Contact Form Submission",
       },
     },
-    Source: 'info@eastonboosters.org',
+    Source: "info@eastonboosters.org",
   };
 
   try {
     await ses.sendEmail(params).promise();
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Email sent successfully' }),
+      body: JSON.stringify({ message: "Email sent successfully" }),
     };
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Failed to send email' }),
+      body: JSON.stringify({ message: "Failed to send email" }),
     };
   }
 };
