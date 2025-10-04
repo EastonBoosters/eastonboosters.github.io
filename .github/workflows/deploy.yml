@@ -4,6 +4,7 @@ name: Deploy Website
 on:
   push:
     branches:
+      - www
       - main
 
 jobs:
