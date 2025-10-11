@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Easton Boosters Website
+Description: Easton Boosters Website Backend
 
 Resources:
   ContactFormLambda:
@@ -12,6 +12,10 @@ Resources:
         S3Key: contact-form.zip
       Runtime: nodejs22.x
       Timeout: 10
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ContactFormTable
+          SES_EMAIL: info@eastonboosters.org
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -24,6 +28,14 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       Policies:
+        - PolicyName: LambdaDynamoDBPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                Resource: !GetAtt ContactFormTable.Arn
         - PolicyName: LambdaSESPolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -31,12 +43,15 @@ Resources:
               - Effect: Allow
                 Action:
                   - ses:SendEmail
-                Resource: "*"
+                Resource: "*" # SES requires a broad resource permission
 
   ApiGateway:
     Type: AWS::ApiGateway::RestApi
     Properties:
       Name: ContactFormApi
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
 
   ApiGatewayResource:
     Type: AWS::ApiGateway::Resource
@@ -57,6 +72,14 @@ Resources:
         IntegrationHttpMethod: POST
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ContactFormLambda.Arn}/invocations"
 
+  LambdaApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt ContactFormLambda.Arn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/*/*"
+
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
     DependsOn: ApiGatewayMethod
@@ -64,16 +87,20 @@ Resources:
       RestApiId: !Ref ApiGateway
       StageName: prod
 
-  DynamoDBTable:
+  ContactFormTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: EastonBoosters
+      TableName: EastonBoostersContactForm
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
       KeySchema:
         - AttributeName: "id"
           KeyType: "HASH"
-      ProvisionedThroughput:
-        ReadCapacityUnits: "1"
-        WriteCapacityUnits: "1"
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  ApiGatewayInvokeURL:
+    Description: "URL to invoke the API Gateway"
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod/contact"
+

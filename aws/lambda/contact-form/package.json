@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "Lambda function for contact form",
   "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
-    "aws-sdk": "^2.1048.0"
+    "@types/jest": "^30.0.0",
+    "aws-sdk": "^2.1048.0",
+    "jest": "^30.2.0"
   }
 }

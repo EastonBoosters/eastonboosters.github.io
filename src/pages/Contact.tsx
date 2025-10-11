@@ -6,18 +6,33 @@ import {
   Box,
   TextField,
   Button,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
+
+// IMPORTANT: Replace this with the actual API Gateway URL from your AWS deployment output.
+const apiGatewayUrl = "YOUR_API_GATEWAY_URL_GOES_HERE";
 
 const Contact: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [alertMessage, setAlertMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setStatus("loading");
+    setAlertMessage("");
+
+    if (apiGatewayUrl.includes("YOUR_API_GATEWAY_URL")) {
+      setStatus("error");
+      setAlertMessage("API Gateway URL is not configured. Please update the Contact.tsx file.");
+      return;
+    }
 
     try {
-      const response = await fetch("YOUR_API_GATEWAY_URL/contact", {
+      const response = await fetch(apiGatewayUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,17 +40,22 @@ const Contact: React.FC = () => {
         body: JSON.stringify({ name, email, message }),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
-        alert("Message sent successfully!");
+        setStatus("success");
+        setAlertMessage("Message sent successfully! We will get back to you soon.");
         setName("");
         setEmail("");
         setMessage("");
       } else {
-        alert("Failed to send message.");
+        setStatus("error");
+        setAlertMessage(result.message || "Failed to send message. Please try again.");
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      alert("Failed to send message.");
+      setStatus("error");
+      setAlertMessage("An unexpected error occurred. Please try again later.");
     }
   };
 
@@ -45,7 +65,7 @@ const Contact: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Contact Us
         </Typography>
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={{ p: 3 }}>
           <form onSubmit={handleSubmit}>
             <TextField
               label="Name"
@@ -54,6 +74,7 @@ const Contact: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={status === "loading"}
             />
             <TextField
               label="Email"
@@ -63,6 +84,7 @@ const Contact: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={status === "loading"}
             />
             <TextField
               label="Message"
@@ -73,16 +95,40 @@ const Contact: React.FC = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
+              disabled={status === "loading"}
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
+            <Box sx={{ mt: 2, position: "relative" }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={status === "loading"}
+              >
+                Send Message
+              </Button>
+              {status === "loading" && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginTop: "-12px",
+                    marginLeft: "-12px",
+                  }}
+                />
+              )}
+            </Box>
+          </form>
+          {alertMessage && (
+            <Alert
+              severity={status === "success" ? "success" : "error"}
               sx={{ mt: 2 }}
             >
-              Send
-            </Button>
-          </form>
+              {alertMessage}
+            </Alert>
+          )}
         </Paper>
       </Box>
     </Container>
