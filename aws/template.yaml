@@ -117,6 +117,7 @@ Resources:
     Properties:
       RestApiId: !Ref ApiGateway
       StageName: prod
+      Description: !Sub "Deployment at ${AWS::StackName}-v2"
 
   ContactFormTable:
     Type: AWS::DynamoDB::Table
