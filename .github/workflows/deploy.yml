@@ -56,3 +56,7 @@ jobs:
           zip -r contact-form.zip lambda/contact-form
           aws s3 cp contact-form.zip s3://eastonboosters-website/
           aws cloudformation deploy --template-file template.yaml --stack-name easton-boosters-stack --capabilities CAPABILITY_IAM
+
+          # Force new API Gateway deployment
+          API_ID=$(aws cloudformation describe-stacks --stack-name easton-boosters-stack --query 'Stacks[0].Outputs[?OutputKey==`ApiGatewayInvokeURL`].OutputValue' --output text | cut -d'/' -f3 | cut -d'.' -f1)
+          aws apigateway create-deployment --rest-api-id $API_ID --stage-name prod --description "Manual deployment for CORS"
