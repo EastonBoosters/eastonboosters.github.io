@@ -9,15 +9,15 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-
-// IMPORTANT: Replace this with the actual API Gateway URL from your AWS deployment output.
-const apiGatewayUrl = "YOUR_API_GATEWAY_URL_GOES_HERE";
+import { config, validateEnv } from "../config/env";
 
 const Contact: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [alertMessage, setAlertMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,14 +25,18 @@ const Contact: React.FC = () => {
     setStatus("loading");
     setAlertMessage("");
 
-    if (apiGatewayUrl.includes("YOUR_API_GATEWAY_URL")) {
+    const envValidation = validateEnv();
+    if (!envValidation.isValid) {
       setStatus("error");
-      setAlertMessage("API Gateway URL is not configured. Please update the Contact.tsx file.");
+      setAlertMessage(
+        "API Gateway URL is not configured. Please contact the site administrator."
+      );
+      console.error("Missing environment variables:", envValidation.missingVars);
       return;
     }
 
     try {
-      const response = await fetch(apiGatewayUrl, {
+      const response = await fetch(config.apiGatewayUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,13 +48,17 @@ const Contact: React.FC = () => {
 
       if (response.ok) {
         setStatus("success");
-        setAlertMessage("Message sent successfully! We will get back to you soon.");
+        setAlertMessage(
+          "Message sent successfully! We will get back to you soon."
+        );
         setName("");
         setEmail("");
         setMessage("");
       } else {
         setStatus("error");
-        setAlertMessage(result.message || "Failed to send message. Please try again.");
+        setAlertMessage(
+          result.message || "Failed to send message. Please try again."
+        );
       }
     } catch (error) {
       console.error("Error sending message:", error);
