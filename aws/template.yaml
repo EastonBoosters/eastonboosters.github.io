@@ -116,14 +116,8 @@ Resources:
       - ApiGatewayOptionsMethod
     Properties:
       RestApiId: !Ref ApiGateway
-      Description: "Deployment with CORS support - v3"
-
-  ApiGatewayStage:
-    Type: AWS::ApiGateway::Stage
-    Properties:
-      DeploymentId: !Ref ApiGatewayDeployment
-      RestApiId: !Ref ApiGateway
       StageName: prod
+      Description: "Deployment with CORS support - v4"
 
   ContactFormTable:
     Type: AWS::DynamoDB::Table
