@@ -6,6 +6,7 @@ import {
   Box,
   Card,
   CardContent,
+  Grid,
 } from "@mui/material";
 
 interface BoardMember {
@@ -55,21 +56,9 @@ const About: React.FC = () => {
         <Typography variant="h5" component="h2" gutterBottom>
           Board of Directors
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 4,
-            justifyContent: "center",
-          }}
-        >
+        <Grid container spacing={4} justifyContent="center">
           {boardMembers.map((member, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: { xs: "100%", sm: "calc(50% - 16px)", md: "calc(33.33% - 22px)" },
-              }}
-            >
+            <Grid key={index} size={{ xs: 12, sm: 6, md: 4 }}>
               <Card sx={{ height: "100%" }}>
                 <CardContent>
                   <Typography variant="h6" component="div">
@@ -81,13 +70,12 @@ const About: React.FC = () => {
                   <Typography variant="body2">{member.bio}</Typography>
                 </CardContent>
               </Card>
-            </Box>
+            </Grid>
           ))}
-        </Box>
+        </Grid>
       </Box>
     </Container>
   );
 };
 
 export default About;
-
