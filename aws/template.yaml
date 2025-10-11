@@ -103,4 +103,3 @@ Outputs:
   ApiGatewayInvokeURL:
     Description: "URL to invoke the API Gateway"
     Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod/contact"
-

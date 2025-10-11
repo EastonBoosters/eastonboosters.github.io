@@ -5,11 +5,11 @@ const ses = new AWS.SES();
 exports.handler = async (event) => {
   const { TABLE_NAME, SES_EMAIL } = process.env;
 
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      headers: { 'Allow': 'POST' },
-      body: JSON.stringify({ message: 'Method Not Allowed' }),
+      headers: { Allow: "POST" },
+      body: JSON.stringify({ message: "Method Not Allowed" }),
     };
   }
 
@@ -19,7 +19,7 @@ exports.handler = async (event) => {
   } catch (error) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'Invalid JSON format in request body.' }),
+      body: JSON.stringify({ message: "Invalid JSON format in request body." }),
     };
   }
 
@@ -28,7 +28,9 @@ exports.handler = async (event) => {
   if (!name || !email || !message) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'Missing required fields: name, email, and message.' }),
+      body: JSON.stringify({
+        message: "Missing required fields: name, email, and message.",
+      }),
     };
   }
 
@@ -54,7 +56,7 @@ exports.handler = async (event) => {
         },
       },
       Subject: {
-        Data: 'New Contact Form Submission from Easton Boosters Website',
+        Data: "New Contact Form Submission from Easton Boosters Website",
       },
     },
     Source: SES_EMAIL,
@@ -63,22 +65,24 @@ exports.handler = async (event) => {
   try {
     await dynamoDb.put(dynamoParams).promise();
     await ses.sendEmail(sesParams).promise();
-    
+
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*', // Enable CORS
+        "Access-Control-Allow-Origin": "*", // Enable CORS
       },
-      body: JSON.stringify({ message: 'Submission successful!' }),
+      body: JSON.stringify({ message: "Submission successful!" }),
     };
   } catch (error) {
-    console.error('Error processing submission:', error);
+    console.error("Error processing submission:", error);
     return {
       statusCode: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*', // Enable CORS for errors too
+        "Access-Control-Allow-Origin": "*", // Enable CORS for errors too
       },
-      body: JSON.stringify({ message: 'An internal error occurred. Please try again later.' }),
+      body: JSON.stringify({
+        message: "An internal error occurred. Please try again later.",
+      }),
     };
   }
 };
