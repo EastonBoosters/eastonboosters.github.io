@@ -6,7 +6,7 @@ const SocialWidget: React.FC = () => {
     <Paper>
       <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
         <iframe
-          src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fyour-facebook-page&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
+          src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D61579917967412&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId"
           width="100%"
           height="500"
           style={{ border: "none", overflow: "hidden" }}
